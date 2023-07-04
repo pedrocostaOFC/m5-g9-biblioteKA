@@ -24,7 +24,7 @@ class ListCreateLoanView(SerializerMethodMixin, generics.ListCreateAPIView):
 
 
 
-class UpdateReturnView(generics.UpdateAPIView):
+class UpdatedReturnView(generics.UpdateAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly, IsAdmin]
 
@@ -41,7 +41,7 @@ class RetrieveLoanView(generics.RetrieveAPIView):
     serializer_class = ListLoanSerializer
 
     
-class DestroyLoanView(generics.DestroyAPIView):
+class DeletedLoanView(generics.DestroyAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdmin]
     queryset = Loan
