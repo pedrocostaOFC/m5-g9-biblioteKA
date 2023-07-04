@@ -8,3 +8,4 @@ class CopySerializer(serializers.ModelSerializer):
             'id',
             'is_avaiable'
         ]
+        read_only_fields = ['book']
