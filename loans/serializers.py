@@ -22,7 +22,7 @@ class CreateLoanSerializer(serializers.ModelSerializer):
     class Meta:
         model = Loan
         fields = "__all__"
-        read_only_fields = ["id", "loan_date", "return_date", "is_returned", "user", "book_id"]
+        read_only_fields = ["user_id", "copy_id", "loan_date", "return_date", "was_returned", ]
 
     def create(self, validated_data):
         book_data = validated_data.pop("book_id")
