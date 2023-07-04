@@ -1,0 +1,6 @@
+venv
+.vscode
+.github
+__pycache__
+db.sqlite3
+SECRET_KEY=
