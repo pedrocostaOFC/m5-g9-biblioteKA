@@ -12,6 +12,6 @@ class Loan(models.Model):
     user = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="loan"
     ) 
-    book = models.ForeignKey(
-        "books.Book", on_delete=models.PROTECT, related_name="book"
+    copy = models.ForeignKey(
+        "copies.Copy", on_delete=models.PROTECT, related_name="copy"
     )
