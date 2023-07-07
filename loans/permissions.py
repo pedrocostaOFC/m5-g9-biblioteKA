@@ -1,5 +1,5 @@
 from rest_framework import permissions
-from books.models import Book
+from copies.models import Copy
 
 
 class IsOwnerOrAdmin(permissions.BasePermission):
@@ -13,12 +13,12 @@ class IsDebitoAndAvailable(permissions.BasePermission):
 
         if request.method in permissions.SAFE_METHODS:
             return True       
-        if request.user.is_debt == True:
+        if request.user.is_blocked == True:
             return False
-        if request.data["book_id"]:
-            book_data = request.data["book_id"]
-            book = Book.objects.get(id=book_data)     
-            return book.is_available
+        if request.data["copy_id"]:
+            copy_data = request.data["copy_id"]
+            copy = Copy.objects.get(id=copy_data)     
+            return copy.is_avaiable
              
 
 class IsAdmin(permissions.BasePermission):
