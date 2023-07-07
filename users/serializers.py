@@ -33,3 +33,11 @@ class UserSerializer(serializers.ModelSerializer):
          
         instance.save()
         return instance
+    
+class UserLoanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "username",
+            "full_name",
+        ]
