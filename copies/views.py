@@ -20,6 +20,7 @@ class CopyView(generics.CreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
 
+
         book_id = request.data["book_id"]
         book = get_object_or_404(Book, pk=book_id)
         if not book.avaiable_copies:
@@ -35,7 +36,7 @@ class CopyView(generics.CreateAPIView):
         serializer.save(book_id=self.request.data["book_id"])
 
 
-class CopyDetailView(generics.RetrieveUpdateDestroyAPIView):
+class CopyDetailView(generics.RetrieveDestroyAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsCollaborator]
     queryset = Copy.objects.all()
