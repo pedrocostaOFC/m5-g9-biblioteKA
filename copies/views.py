@@ -21,14 +21,14 @@ class CopyView(generics.CreateAPIView):
 
         book = Book.objects.get_object_or_404(Book, id=self.request.book_id)
 
-        book.avaiable_copies = avaiable_copies + 1
+        book.avaiable_copies = book.avaiable_copies + 1
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
         return serializer.save(book_id=self.request.book_id)
 
-class CopyDetailView(generics.RetrieveUpdateDestroyAPIView):
+class CopyDetailView(generics.RetrieveDestroyAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsCollaborator]
     queryset = Copy.objects.all()
