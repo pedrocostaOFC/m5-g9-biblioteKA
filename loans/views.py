@@ -4,13 +4,14 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from loans.mixins import SerializerMethodMixin
 from loans.permissions import IsOwnerOrAdmin, IsDebitoAndAvailable, IsAdmin
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from loans.models import Loan
 
 from loans.serializers import ListLoanSerializer, CreateLoanSerializer, CreateReturnSerializer
     
 class ListCreateLoanView(SerializerMethodMixin, generics.ListCreateAPIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly, IsDebitoAndAvailable]
 
     queryset = Loan.objects.all()          
@@ -20,12 +21,12 @@ class ListCreateLoanView(SerializerMethodMixin, generics.ListCreateAPIView):
     }         
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user, book_id=self.request.data["book_id"])
+        serializer.save(user=self.request.user, copy_id=self.request.data["copy_id"])
 
 
 
 class UpdatedReturnView(generics.UpdateAPIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly, IsAdmin]
 
     queryset = Loan.objects.all()          
