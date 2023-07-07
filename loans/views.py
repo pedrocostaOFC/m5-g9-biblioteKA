@@ -6,22 +6,28 @@ from loans.mixins import SerializerMethodMixin
 from loans.permissions import IsOwnerOrAdmin, IsDebitoAndAvailable, IsAdmin
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+
 from loans.models import Loan
+from users.models import User
 
 from loans.serializers import ListLoanSerializer, CreateLoanSerializer, CreateReturnSerializer
     
-class ListCreateLoanView(SerializerMethodMixin, generics.ListCreateAPIView):
+class ListCreateLoanView(generics.ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly, IsDebitoAndAvailable]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = Loan.objects.all()
 
-    queryset = Loan.objects.all()          
-    serializer_map = {
-        'GET': ListLoanSerializer,
-        'POST': CreateLoanSerializer,
-    }         
+    serializer_class = CreateLoanSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        instance_user = get_object_or_404(User, pk=self.request.user.id)
+
+        return queryset.filter(user=instance_user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user, copy_id=self.request.data["copy_id"])
+
 
 
 
