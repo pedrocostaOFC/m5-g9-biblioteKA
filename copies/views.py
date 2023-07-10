@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .permissions import IsCollaborator
 from books.models import Book
+from copies.models import Copy
 
 class CopyView(generics.CreateAPIView):
     authentication_classes = [JWTAuthentication]
@@ -41,3 +42,12 @@ class CopyDetailView(generics.RetrieveDestroyAPIView):
     permission_classes = [IsCollaborator]
     queryset = Copy.objects.all()
     serializer_class = CopySerializer
+
+    def delete(self, request, *args, **kwargs):
+        copy = get_object_or_404(Copy, pk=self.kwargs.get('pk'))
+        book = get_object_or_404(Book, pk=copy.book_id)
+
+        book.avaiable_copies -= 1
+        book.save()
+
+        return self.destroy(request, *args, **kwargs)
