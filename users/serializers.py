@@ -3,13 +3,26 @@ from rest_framework.validators import UniqueValidator
 from .models import User, UserBook
 
 class UserBookSerializer(serializers.ModelSerializer):
-    user_name = serializers.CharField(source = 'user.username', read_only=True)
-    book_name = serializers.CharField(source='book.title', read_only=True)
+    username = serializers.CharField(source='user.username', read_only=True)
+    books = serializers.CharField(source='book.title', read_only=True)
 
     class Meta:
         model = UserBook
-        fields = ['id','user_name', 'book_name']
-        read_only_fields = ['id']
+        fields = '__all__'
+        extra_kwargs = {'user': {"write_only": True}, 
+                        'book': {"write_only": True}}
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        book = validated_data['book']
+
+        if UserBook.objects.filter(user=user, book=book).exists():
+            raise serializers.ValidationError("user already follows this book.")
+
+        user_book = UserBook.objects.create(user=user, book=book)
+        return user_book
+
+    
 
 class UserSerializer(serializers.ModelSerializer):
     books_followed = serializers.SerializerMethodField()
