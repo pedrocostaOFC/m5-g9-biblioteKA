@@ -12,8 +12,8 @@ class CreateLoanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Loan
-        fields = ["id", "user", "copy_id", "return_date", "loan_date", "is_returned"]
-        read_only_fields = ["user_id", "copy_id", "return_date", "loan_date", "is_returned"]
+        fields = ["id", "user", "copy_id", "return_date", "loan_date", "was_returned"]
+        read_only_fields = ["user_id", "copy_id", "return_date", "loan_date", "was_returned"]
 
         def create(self, validated_data):
             return Loan.objects.create(**validated_data)
@@ -27,7 +27,7 @@ class CreateReturnSerializer(serializers.ModelSerializer):
         read_only_fields = ["user_id", "copy_id", "loan_date", "return_date", "was_returned"]
 
     def update(self, instance, validated_data):
-        instance.is_returned = True
+        instance.was_returned = True
         instance.copy.is_available = True
         instance.copy.save()
         instance.save()
