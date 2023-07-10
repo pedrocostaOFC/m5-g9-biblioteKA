@@ -17,6 +17,7 @@ class CreateLoanSerializer(serializers.ModelSerializer):
 
         def create(self, validated_data):
             return Loan.objects.create(**validated_data)
+        
 
 class CreateReturnSerializer(serializers.ModelSerializer):
     user = UserLoanSerializer(read_only=True)

@@ -32,66 +32,39 @@ class ListCreateLoanView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user, copy_id=self.request.data["copy_id"])
 
-
-
-
-class UpdatedReturnView(generics.UpdateAPIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly, IsAdmin]
-
-    queryset = Loan.objects.all()          
-    serializer_class = CreateReturnSerializer         
-
-
-
-class RetrieveLoanView(generics.RetrieveUpdateAPIView):
+class LoanDetailView(generics.RetrieveUpdateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
-
     queryset = Loan.objects.all()
-    serializer_class = ListLoanSerializer
 
-    def patch(self, request):
-        try:
-            copy = Copy.objects.get(id=request.data["copy_id"])
-        except:
-            return Response(
-                {"message": "Copy does not exist."}, status=status.HTTP_404_NOT_FOUND
-            )
+    serializer_class = CreateLoanSerializer
 
-        try:
-            loan = Loan.objects.get(
-                user=self.request.user, copy=copy, return_date=None
-            )
-        except:
-            return Response(
-                {"message": "the book is still within the return date."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+    def patch(self, request, *args, **kwargs):
+        user = User.objects.get(id=self.request.data["user_id"])
+        copy = Copy.objects.get(id=self.request.data["copy_id"])
 
-        loan.return_date = timezone.now()
-        copy.is_avaiable = False
+        now = timezone.now().date()
 
-        if loan.return_date > loan.loan_date:
-            user = self.request.user
-            user.is_blocked = True
-            if (loan.return_date - loan.loan_date) > timedelta(day=1):
-                violated_days = loan.return_date - loan.loan_date
-                punishment = (violated_days * 2) + 7
-                user.blocked_until = timedelta(days=punishment)
-            else:
-                user.blocked_until = timezone.now() + timedelta(days=7)
-            user.save()
+        date_return = Loan.return_date
+        block_end_date = now + timedelta(days=3)
 
-        loan.save()
+        if not user.is_blocked:
+                user.is_blocked = True
+                user.block_end_date = block_end_date
+                user.save()
+
+        loan_date = user.objects.filter(user=user, is_blocked=False).exists()
+
+        if not loan_date:
+                additional_block_days_after_return = 5
+                user.block_end_date += timedelta(days=additional_block_days_after_return)
+                user.save()
+
+        # if now > date_return:
+
+        return Response({"message": "This user cannot borrow any books for at least 5 more days"})
+
+        copy.is_available = True
         copy.save()
 
-        return Response({"message": "Book returned."}, status=status.HTTP_200_OK)
-
-
-    
-class DeletedLoanView(generics.DestroyAPIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdmin]
-    queryset = Loan
-    serializer_class = ListLoanSerializer 
+        return self.partial_update(request, *args, **kwargs)
