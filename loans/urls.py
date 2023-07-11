@@ -4,8 +4,7 @@ from . import views
 
 urlpatterns = [
     path('loan/', views.ListCreateLoanView.as_view()),
-    # path('loan/return/<int:pk>/', views.UpdatedReturnView.as_view()),
-    path('loan/user/', views.RetrieveLoanView.as_view()),
-    path('loan/all', views.ListCreateLoanView.as_view()),
-    path('loan/<int:pk>/', views.DeletedLoanView.as_view())
+    path('loan/<int:pk>/', views.LoanDetailView.as_view()),
 ]
+
+
