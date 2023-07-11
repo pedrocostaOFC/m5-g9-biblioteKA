@@ -9,20 +9,27 @@ from loans.models import Loan
 from users.models import User
 from copies.models import Copy
 from books.models import Book
+from .permissions import IsCollaborator
 from loans.serializers import ListLoanSerializer, CreateLoanSerializer, CreateReturnSerializer
-
+from rest_framework.exceptions import APIException
 
 class ListCreateLoanView(generics.ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsCollaborator]
+
     queryset = Loan.objects.all()
     serializer_class = CreateLoanSerializer
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        instance_user = get_object_or_404(User, pk=self.request.user.id)
-        return queryset.filter(user=instance_user)
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user, copy_id=self.request.data["copy_id"])
+        copy = get_object_or_404(Copy, pk=self.request.data["copy_id"])
+        user = get_object_or_404(User, pk=self.request.data["user_id"])
+
+        if user.is_blocked:
+            raise APIException("User is blocked.", code=status.HTTP_403_FORBIDDEN)
+
+        serializer.save(user=user, copy=copy)
+
+
 class LoanDetailView(generics.RetrieveUpdateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -44,5 +51,5 @@ class LoanDetailView(generics.RetrieveUpdateAPIView):
                 user.is_blocked = True
                 user.save()
         else:
-            return Response({"message": "You must return the book."}, status.HTTP_400_BAD_REQUEST)
+            raise APIException({"message": "You must return the book."}, status.HTTP_400_BAD_REQUEST)
         return self.partial_update(request, *args, **kwargs)
