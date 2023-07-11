@@ -31,7 +31,11 @@ class CopyView(generics.CreateAPIView):
              
         book.save()
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        copy = self.queryset.get(pk=serializer.data['id'])
+        copy_serializer = self.get_serializer(copy)
+
+        return Response(copy_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
 
     def perform_create(self, serializer):
         serializer.save(book_id=self.request.data["book_id"])
