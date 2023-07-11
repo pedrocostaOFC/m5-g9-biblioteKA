@@ -78,7 +78,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "bandkamp.urls"
+ROOT_URLCONF = "biblioteKA.urls"
 
 TEMPLATES = [
     {
@@ -96,7 +96,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "bandkamp.wsgi.application"
+WSGI_APPLICATION = "biblioteKA.wsgi.application"
 
 
 # Database
