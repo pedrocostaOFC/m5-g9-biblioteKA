@@ -7,7 +7,7 @@ def return_date():
 class Loan(models.Model):
     loan_date = models.DateTimeField(auto_now_add=True)
     return_date = models.DateTimeField(default=return_date)
-    is_returned = models.BooleanField(default=False) 
+    was_returned = models.BooleanField(default=False) 
     
     user = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="loan"
