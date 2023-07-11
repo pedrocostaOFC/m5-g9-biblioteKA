@@ -4,8 +4,10 @@ from django.utils import timezone
 
 def return_date():    
     date = datetime.now() + timedelta(days=30)
+    
     while date.weekday() >= 5:
         date += timedelta(days=1)
+
     return date
 
 
