@@ -1,6 +1,7 @@
 from .models import User, UserBook
 from .serializers import UserSerializer, UserBookSerializer
-from rest_framework.generics import ListCreateAPIView, DestroyAPIView, RetrieveUpdateDestroyAPIView
+
+from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView, DestroyAPIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .permissions import IsStudentOrCollaborator
 
@@ -28,6 +29,6 @@ class UserBookViewDetail(ListCreateAPIView):
 class UnfollowBookView(DestroyAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsStudentOrCollaborator]
-    
+
     queryset = UserBook.objects.all()
     serializer_class = UserBookSerializer
