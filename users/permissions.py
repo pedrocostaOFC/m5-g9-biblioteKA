@@ -7,3 +7,7 @@ class IsStudentOrCollaborator(permissions.BasePermission):
             return True
         if request.user == obj:
             return True
+
+class IsCollaborator(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.is_superuser)

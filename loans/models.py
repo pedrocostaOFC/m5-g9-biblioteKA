@@ -1,8 +1,15 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from django.db import models
+from django.utils import timezone
 
 def return_date():    
-    return datetime.now() + timedelta(days=30)
+    date = datetime.now() + timedelta(days=30)
+    
+    while date.weekday() >= 5:
+        date += timedelta(days=1)
+
+    return date
+
 
 class Loan(models.Model):
     loan_date = models.DateTimeField(auto_now_add=True)
@@ -13,5 +20,5 @@ class Loan(models.Model):
         "users.User", on_delete=models.CASCADE, related_name="loan"
     ) 
     copy = models.ForeignKey(
-        "copies.Copy", on_delete=models.PROTECT, related_name="loan"
+        "copies.Copy", on_delete=models.CASCADE, related_name="loan"
     )
