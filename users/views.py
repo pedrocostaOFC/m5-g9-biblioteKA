@@ -9,8 +9,8 @@ from .permissions import IsStudentOrCollaborator, IsCollaborator
 # Create your views here.
 
 class UserView(ListCreateAPIView):
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsCollaborator]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsCollaborator]
     
     queryset = User.objects.all()
     serializer_class = UserSerializer
