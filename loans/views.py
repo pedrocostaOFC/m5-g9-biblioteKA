@@ -23,6 +23,9 @@ class ListCreateLoanView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         copy = get_object_or_404(Copy, pk=self.request.data["copy_id"])
         user = get_object_or_404(User, pk=self.request.data["user_id"])
+        book = get_object_or_404(Book, pk=copy.book.id)
+        book.avaiable_copies -+ 1
+        book.save()
 
         if user.is_blocked:
             raise APIException("User is blocked.", code=status.HTTP_403_FORBIDDEN)
@@ -36,7 +39,10 @@ class LoanDetailView(generics.RetrieveUpdateAPIView):
     queryset = Loan.objects.all()
     serializer_class = CreateLoanSerializer
     def patch(self, request, *args, **kwargs):
-        if request.data["was_returned"] == True:
+        loan = self.get_object()
+        loan.was_returned = request.data.get('was_returned', loan.was_returned)
+        loan.save()
+        if loan.was_returned:
             now_date = date.today()
             loan = get_object_or_404(Loan, id=self.kwargs.get('pk'))
             return_date = loan.return_date.date()
