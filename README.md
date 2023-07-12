@@ -45,3 +45,65 @@
 <li>Verificar histórico de empréstimos de estudantes.</li>
 
 <li>Verificar status do estudante para determinar se está bloqueado de fazer um novo empréstimo por um período de tempo específico.</li>
+
+# Sistema de Gerenciamento de Biblioteca
+
+Este é um sistema de gerenciamento de biblioteca que permite o controle de empréstimos de livros, cadastro de usuários e colaboradores, e administração de cópias de livros.
+
+## Funcionalidades Principais
+
+- Cadastro de Usuários:
+  - Apenas colaboradores da biblioteca podem criar novos usuários.
+  - Os usuários podem ser estudantes ou colaboradores da biblioteca.
+  - Usuários não autenticados podem acessar informações básicas sobre os livros, como disponibilidade e título.
+
+- Empréstimo de Livros:
+  - Cada livro pode ser emprestado por um período fixo de tempo.
+  - Caso a devolução caia em um fim de semana (sábado ou domingo), a data de retorno é modificada para o próximo dia útil.
+  - Estudantes que não devolvem os livros no prazo estipulado são impedidos de solicitar novos empréstimos.
+  - Bloqueio de novos empréstimos: estudantes com devoluções pendentes não podem pegar mais livros emprestados até completar as devoluções.
+
+- Controle de Livros:
+  - Os colaboradores podem cadastrar novos livros no sistema.
+  - É possível obter informações sobre os livros, como título e disponibilidade.
+  - Histórico de empréstimos de cada estudante pode ser verificado pelos colaboradores.
+
+## Endpoints
+
+### Usuário
+
+- **POST /user**: Cria um novo usuário. Somente colaboradores podem realizar essa ação.
+- **GET /user**: Lista todos os usuários cadastrados.
+- **GET /user/{id}**: Obtém informações sobre um usuário específico.
+- **PATCH /user/{id}**: Atualiza informações de um usuário específico.
+- **DELETE /user/{id}**: Deleta um usuário específico.
+
+### Autenticação
+
+- **POST /login**: Realiza o login de um usuário comum ou um super usuário.
+
+### Livro
+
+- **POST /book**: Cadastra um novo livro.
+- **GET /book**: Lista todos os livros cadastrados.
+- **GET /book/{id}**: Obtém informações sobre um livro específico.
+- **DELETE /book/{id}**: Deleta um livro específico.
+
+### Cópias
+
+- **POST /copies**: Cria uma cópia de um livro, informando o ID do livro no corpo da requisição.
+- **GET /copies/{id}**: Obtém informações sobre uma cópia específica.
+- **DELETE /copies/{id}**: Deleta uma cópia específica.
+
+### Empréstimo
+
+- **POST /loan**: Realiza um novo empréstimo. Apenas colaboradores podem fazer isso. Deve-se fornecer o ID da cópia e do usuário. Usuários bloqueados não podem realizar empréstimos.
+- **GET /loan**: Lista todos os empréstimos realizados.
+- **PATCH /loan/{id}**: Marca um empréstimo como devolvido. Somente colaboradores podem fazer isso. Deve-se fornecer o campo "foi_devolvido" como true.
+
+## Contribuição
+
+Leonardo Cunha.
+Artur Augusto.
+Pedro Costa.
+Renan Feliz.
